@@ -46,9 +46,7 @@
 <script>
     const SUPABASE_URL = 'https://gixpleqmaigyubilkmco.supabase.co'; // 替换为你的 URL
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpeHBsZXFtYWlneXViaWxrbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3ODYzNTcsImV4cCI6MjA2NzM2MjM1N30.fiXh3_WzYC6iWvHsZT_81arGn9tt3hCzKTmjjUHf8RM'; // 替换为你的 Key
-    const {createClient} = supabase;
-    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadListings() {
         const {data, error} = await supabaseClient.from('houses').select('*').order('created_at', {ascending: false});
@@ -97,15 +95,15 @@
             const div = document.createElement('div');
             div.className = 'bg-white p-4 rounded shadow';
             div.innerHTML = `
-          <h3 class="text-lg font-bold text-green-700">${item.title}（${item.source_type}）</h3>
-          <p><strong>租金：</strong>${item.rent_price} 元/月，押金：${item.deposit}</p>
-          <p><strong>户型：</strong>${item.room_type}｜<strong>面积：</strong>${item.area}｜<strong>朝向：</strong>${item.orientation}</p>
-          <p><strong>配套：</strong>${item.features}</p>
-          <p><strong>联系人：</strong>${item.agent_name}（${item.agent_company}）</p>
-          <p><strong>电话：</strong>${item.contact_phone}</p>
-          <p><strong>来源网址：</strong><a class="text-blue-500 underline" href="${item.source_website}" target="_blank">查看</a></p>
-          <button onclick="deleteListing('${item.house_id}')" class="mt-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">删除</button>
-        `;
+      <h3 class="text-lg font-bold text-green-700">${item.title}（${item.source_type}）</h3>
+      <p><strong>租金：</strong>${item.rent_price} 元/月，押金：${item.deposit}</p>
+      <p><strong>户型：</strong>${item.room_type}｜<strong>面积：</strong>${item.area}｜<strong>朝向：</strong>${item.orientation}</p>
+      <p><strong>配套：</strong>${item.features}</p>
+      <p><strong>联系人：</strong>${item.agent_name}（${item.agent_company}）</p>
+      <p><strong>电话：</strong>${item.contact_phone}</p>
+      <p><strong>来源网址：</strong><a class="text-blue-500 underline" href="${item.source_website}" target="_blank">查看</a></p>
+      <button onclick="deleteListing('${item.house_id}')" class="mt-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">删除</button>
+    `;
             container.appendChild(div);
         });
     }

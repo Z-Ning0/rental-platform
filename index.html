@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>租房信息平台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,26 +15,28 @@
     <div class="bg-white p-4 rounded shadow mb-6">
         <h2 class="text-xl font-semibold mb-2">添加租房信息</h2>
         <div class="grid grid-cols-2 gap-4">
-            <input id="title" placeholder="房源标题" class="border p-2 rounded" />
-            <input id="source_type" placeholder="平台来源 (如 贝壳、自如)" class="border p-2 rounded" />
-            <input id="source_id" placeholder="平台房源ID" class="border p-2 rounded" />
-            <input id="rent_type" placeholder="租赁方式 (整租/合租)" class="border p-2 rounded" />
-            <input id="room_type" placeholder="户型 (如 3室2厅)" class="border p-2 rounded" />
-            <input id="area" placeholder="面积 (如 100㎡)" class="border p-2 rounded" />
-            <input id="orientation" placeholder="朝向 (如 南北)" class="border p-2 rounded" />
-            <input id="floor_info" placeholder="楼层信息 (如 12/25楼)" class="border p-2 rounded" />
-            <input id="has_elevator" placeholder="有无电梯" class="border p-2 rounded" />
-            <input id="min_rent_period" placeholder="最短租期 (月)" class="border p-2 rounded" />
-            <input id="rent_price" placeholder="月租金 (元)" class="border p-2 rounded" />
-            <input id="deposit" placeholder="押金 (元)" class="border p-2 rounded" />
-            <input id="payment_terms" placeholder="付款方式" class="border p-2 rounded" />
-            <input id="features" placeholder="配套设施 (如 空调 热水器等)" class="border p-2 rounded" />
-            <input id="agent_name" placeholder="经纪人姓名" class="border p-2 rounded" />
-            <input id="agent_company" placeholder="经纪公司" class="border p-2 rounded" />
-            <input id="contact_phone" placeholder="联系电话" class="border p-2 rounded" />
-            <input id="source_website" placeholder="来源网址" class="border p-2 rounded" />
+            <input id="title" placeholder="房源标题" class="border p-2 rounded"/>
+            <input id="source_type" placeholder="平台来源 (如 贝壳、自如)" class="border p-2 rounded"/>
+            <input id="source_id" placeholder="平台房源ID" class="border p-2 rounded"/>
+            <input id="rent_type" placeholder="租赁方式 (整租/合租)" class="border p-2 rounded"/>
+            <input id="room_type" placeholder="户型 (如 3室2厅)" class="border p-2 rounded"/>
+            <input id="area" placeholder="面积 (如 100㎡)" class="border p-2 rounded"/>
+            <input id="orientation" placeholder="朝向 (如 南北)" class="border p-2 rounded"/>
+            <input id="floor_info" placeholder="楼层信息 (如 12/25楼)" class="border p-2 rounded"/>
+            <input id="has_elevator" placeholder="有无电梯" class="border p-2 rounded"/>
+            <input id="min_rent_period" placeholder="最短租期 (月)" class="border p-2 rounded"/>
+            <input id="rent_price" placeholder="月租金 (元)" class="border p-2 rounded"/>
+            <input id="deposit" placeholder="押金 (元)" class="border p-2 rounded"/>
+            <input id="payment_terms" placeholder="付款方式" class="border p-2 rounded"/>
+            <input id="features" placeholder="配套设施 (如 空调 热水器等)" class="border p-2 rounded"/>
+            <input id="agent_name" placeholder="经纪人姓名" class="border p-2 rounded"/>
+            <input id="agent_company" placeholder="经纪公司" class="border p-2 rounded"/>
+            <input id="contact_phone" placeholder="联系电话" class="border p-2 rounded"/>
+            <input id="source_website" placeholder="来源网址" class="border p-2 rounded"/>
         </div>
-        <button onclick="submitToSupabase()" class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">提交</button>
+        <button onclick="submitToSupabase()" class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            提交
+        </button>
     </div>
 
     <!-- 房源展示 -->
@@ -44,10 +46,12 @@
 <script>
     const SUPABASE_URL = 'https://gixpleqmaigyubilkmco.supabase.co'; // 替换为你的 URL
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpeHBsZXFtYWlneXViaWxrbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3ODYzNTcsImV4cCI6MjA2NzM2MjM1N30.fiXh3_WzYC6iWvHsZT_81arGn9tt3hCzKTmjjUHf8RM'; // 替换为你的 Key
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const {createClient} = supabase;
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 
     async function loadListings() {
-        const { data, error } = await supabase.from('houses').select('*').order('created_at', { ascending: false });
+        const {data, error} = await supabaseClient.from('houses').select('*').order('created_at', {ascending: false});
         if (error) return console.error(error);
         renderListings(data);
     }
@@ -74,14 +78,14 @@
             source_website: document.getElementById('source_website').value,
         };
 
-        const { error } = await supabase.from('houses').insert([data]);
+        const {error} = await supabaseClient.from('houses').insert([data]);
         if (error) return console.error(error);
         loadListings();
         document.querySelectorAll('input').forEach(i => i.value = '');
     }
 
     async function deleteListing(house_id) {
-        const { error } = await supabase.from('houses').delete().eq('house_id', house_id);
+        const {error} = await supabaseClient.from('houses').delete().eq('house_id', house_id);
         if (error) return console.error(error);
         loadListings();
     }

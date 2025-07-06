@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>租房信息平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-6">
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-700">租房信息平台</h1>
+
+    <!-- 添加房源表单 -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+        <h2 class="text-xl font-semibold mb-2">添加租房信息</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <input id="title" placeholder="房源标题" class="border p-2 rounded" />
+            <input id="source_type" placeholder="平台来源 (如 贝壳、自如)" class="border p-2 rounded" />
+            <input id="source_id" placeholder="平台房源ID" class="border p-2 rounded" />
+            <input id="rent_type" placeholder="租赁方式 (整租/合租)" class="border p-2 rounded" />
+            <input id="room_type" placeholder="户型 (如 3室2厅)" class="border p-2 rounded" />
+            <input id="area" placeholder="面积 (如 100㎡)" class="border p-2 rounded" />
+            <input id="orientation" placeholder="朝向 (如 南北)" class="border p-2 rounded" />
+            <input id="floor_info" placeholder="楼层信息 (如 12/25楼)" class="border p-2 rounded" />
+            <input id="has_elevator" placeholder="有无电梯" class="border p-2 rounded" />
+            <input id="min_rent_period" placeholder="最短租期 (月)" class="border p-2 rounded" />
+            <input id="rent_price" placeholder="月租金 (元)" class="border p-2 rounded" />
+            <input id="deposit" placeholder="押金 (元)" class="border p-2 rounded" />
+            <input id="payment_terms" placeholder="付款方式" class="border p-2 rounded" />
+            <input id="features" placeholder="配套设施 (如 空调 热水器等)" class="border p-2 rounded" />
+            <input id="agent_name" placeholder="经纪人姓名" class="border p-2 rounded" />
+            <input id="agent_company" placeholder="经纪公司" class="border p-2 rounded" />
+            <input id="contact_phone" placeholder="联系电话" class="border p-2 rounded" />
+            <input id="source_website" placeholder="来源网址" class="border p-2 rounded" />
+        </div>
+        <button onclick="submitToSupabase()" class="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">提交</button>
+    </div>
+
+    <!-- 房源展示 -->
+    <div id="listingContainer" class="space-y-4"></div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://gixpleqmaigyubilkmco.supabase.co'; // 替换为你的 URL
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpeHBsZXFtYWlneXViaWxrbWNvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3ODYzNTcsImV4cCI6MjA2NzM2MjM1N30.fiXh3_WzYC6iWvHsZT_81arGn9tt3hCzKTmjjUHf8RM'; // 替换为你的 Key
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function loadListings() {
+        const { data, error } = await supabase.from('houses').select('*').order('created_at', { ascending: false });
+        if (error) return console.error(error);
+        renderListings(data);
+    }
+
+    async function submitToSupabase() {
+        const data = {
+            title: document.getElementById('title').value,
+            source_type: document.getElementById('source_type').value,
+            source_id: document.getElementById('source_id').value,
+            rent_type: document.getElementById('rent_type').value,
+            room_type: document.getElementById('room_type').value,
+            area: document.getElementById('area').value,
+            orientation: document.getElementById('orientation').value,
+            floor_info: document.getElementById('floor_info').value,
+            has_elevator: document.getElementById('has_elevator').value,
+            min_rent_period: document.getElementById('min_rent_period').value,
+            rent_price: document.getElementById('rent_price').value,
+            deposit: document.getElementById('deposit').value,
+            payment_terms: document.getElementById('payment_terms').value,
+            features: document.getElementById('features').value,
+            agent_name: document.getElementById('agent_name').value,
+            agent_company: document.getElementById('agent_company').value,
+            contact_phone: document.getElementById('contact_phone').value,
+            source_website: document.getElementById('source_website').value,
+        };
+
+        const { error } = await supabase.from('houses').insert([data]);
+        if (error) return console.error(error);
+        loadListings();
+        document.querySelectorAll('input').forEach(i => i.value = '');
+    }
+
+    async function deleteListing(house_id) {
+        const { error } = await supabase.from('houses').delete().eq('house_id', house_id);
+        if (error) return console.error(error);
+        loadListings();
+    }
+
+    function renderListings(listings) {
+        const container = document.getElementById('listingContainer');
+        container.innerHTML = '';
+        listings.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'bg-white p-4 rounded shadow';
+            div.innerHTML = `
+          <h3 class="text-lg font-bold text-green-700">${item.title}（${item.source_type}）</h3>
+          <p><strong>租金：</strong>${item.rent_price} 元/月，押金：${item.deposit}</p>
+          <p><strong>户型：</strong>${item.room_type}｜<strong>面积：</strong>${item.area}｜<strong>朝向：</strong>${item.orientation}</p>
+          <p><strong>配套：</strong>${item.features}</p>
+          <p><strong>联系人：</strong>${item.agent_name}（${item.agent_company}）</p>
+          <p><strong>电话：</strong>${item.contact_phone}</p>
+          <p><strong>来源网址：</strong><a class="text-blue-500 underline" href="${item.source_website}" target="_blank">查看</a></p>
+          <button onclick="deleteListing('${item.house_id}')" class="mt-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600">删除</button>
+        `;
+            container.appendChild(div);
+        });
+    }
+
+    loadListings();
+</script>
+</body>
+</html>

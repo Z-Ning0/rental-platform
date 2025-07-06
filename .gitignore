@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# IntelliJ / WebStorm / IDEA
+.idea/
+
+# Logs or build (若以后添加工具)
+dist/
+build/
